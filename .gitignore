@@ -1,0 +1,6 @@
+*.edf
+Dataset_and_Extraction/bonn/bonn_dataset/
+Dataset_and_Extraction/iit_delhi/IIT_Delhi_EEG_dataset/
+IIT_Delhi_EEG_Dataset/IIT_Delhi_128/
+CHB-MIT_dataset/CHBMIT_1s_0.75OW/
+Bonn_EEG_Dataset/bonn_256/

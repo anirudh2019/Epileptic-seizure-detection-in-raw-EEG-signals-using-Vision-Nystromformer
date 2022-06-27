@@ -1,0 +1,2 @@
+num_conf,seq_len,embed_dim,num_params,lr,batch_size,img_size,patch_size,depth,num_heads,embed_dim_scale,ff_mult,num_landmarks,val_accuracy,val_hmean,val_sensitivity,val_specificity,test_accuracy,test_hmean,test_sensitivity,test_specificity
+1,32,8,2058,0.001,32,"(1, 128)","(1, 4)",3,4,2,2,8,98.52,98.6,98.21,99.01,96.77,96.95,96.02,97.98

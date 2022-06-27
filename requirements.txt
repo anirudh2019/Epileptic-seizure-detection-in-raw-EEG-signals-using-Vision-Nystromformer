@@ -1,0 +1,13 @@
+pyEDFlib
+einops
+prettytable
+scikit-learn
+matplotlib
+seaborn
+tqdm
+pandas
+numpy
+pytz
+datetime
+statistics
+seaborn
