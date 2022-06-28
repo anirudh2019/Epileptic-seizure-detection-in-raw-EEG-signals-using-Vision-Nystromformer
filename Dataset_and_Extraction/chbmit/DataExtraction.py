@@ -153,16 +153,16 @@ def create_csvs(new_data_dir):
         df.to_csv(new_data_dir + subject + ".csv", index=False)
     return
 
-def train_val_test(new_data_dir):
+def train_val_test(new_data_dir, num_folds = 6, data_split = {"train": 0.75, "val": 0.25}):
     print("\n>> Applying 6-fold Cross Validation then splitting Train into Train and Val(75%,25%)")
     for subject in subjects:
         df = pd.read_csv(new_data_dir+subject+".csv")
-        folds = Kfold_crossval(df, 6)
+        folds = Kfold_crossval(df, num_folds)
         for fold,(train_df, test_df) in enumerate(folds):     
             fold_path = new_data_dir+subject+"/"+f"fold-{fold+1}"+"/"
             if not os.path.exists(fold_path):
                 os.makedirs(fold_path)  
-            train_df, val_df = split_df(train_df, data_split = {"train": 0.75, "val": 0.25})
+            train_df, val_df = split_df(train_df, data_split)
             train_df.to_csv(fold_path+"train.csv", index=False)
             val_df.to_csv(fold_path+"val.csv", index=False)
             test_df.to_csv(fold_path+"test.csv", index=False)
@@ -170,5 +170,5 @@ def train_val_test(new_data_dir):
 
 new_data_dir = makedataset(dur=1, overlap=0.75)
 create_csvs(new_data_dir)
-train_val_test(new_data_dir)
+train_val_test(new_data_dir, num_folds = 6, data_split = {"train": 0.75, "val": 0.25})
 print("\nFINISHED!!!")

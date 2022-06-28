@@ -49,10 +49,10 @@ dataset_name = "IIT_Delhi_128"
 num_folds = 6
 dataset_dir = "./"+dataset_name+"/"
 save_dir = f"./resultss/{dataset_name}/{model_name}/"
-import zipfile, os
-if not os.path.exists(f"./{dataset_name}"):
-    with zipfile.ZipFile(f"./{dataset_name}.zip", 'r') as zip_ref:
-        zip_ref.extractall("./")
+# import zipfile, os
+# if not os.path.exists(f"./{dataset_name}"):
+#     with zipfile.ZipFile(f"./{dataset_name}.zip", 'r') as zip_ref:
+#         zip_ref.extractall("./")
 ##############  MAIN FUNCTION
 torch.manual_seed(seed)
 random.seed(seed)

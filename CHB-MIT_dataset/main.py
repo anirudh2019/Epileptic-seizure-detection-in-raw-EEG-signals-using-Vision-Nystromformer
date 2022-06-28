@@ -51,10 +51,10 @@ dataset_name = "CHBMIT_1s_0.75OW"
 num_folds = 6
 dataset_dir = "./"+dataset_name+"/"
 save_dir = f"./results/{dataset_name}/{model_name}/"
-import zipfile, os
-if not os.path.exists(f"./{dataset_name}"):
-    with zipfile.ZipFile(f"./{dataset_name}.zip", 'r') as zip_ref:
-        zip_ref.extractall(f"./{dataset_name}")
+# import zipfile, os
+# if not os.path.exists(f"./{dataset_name}"):
+#     with zipfile.ZipFile(f"./{dataset_name}.zip", 'r') as zip_ref:
+#         zip_ref.extractall(f"./{dataset_name}")
 ##############  MAIN FUNCTION
 torch.manual_seed(seed)
 random.seed(seed)
