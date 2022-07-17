@@ -38,7 +38,6 @@ def train_model(device, model, num_epochs, train_dl, val_dl, loss_fn, optimizer,
     
     print("Training...")
     for epoch in tqdm(range(num_epochs)):
-      # print(f"Epoch : {epoch+1}")
       model.train(True)
       epoch_loss = 0
       epoch_accuracy = 0
