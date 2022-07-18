@@ -68,6 +68,7 @@ def extract_seizures(signals, edfinfo, seizure_dir, dur, overlap, per_subj_sez_c
         seizure_seg = signals[:, edfinfo["start"][i]*256 : edfinfo["end"][i]*256]
         for j in range(0,seizure_seg.shape[1], int(dur*(1-overlap)*256)):          
             f = gzip.GzipFile(seizure_dir + f"{edf}_{i+1}_{j+1}"+ ".npy.gz", "w")
+            # BOUNDARY CONDITION
             if j+dur*256-1>=seizure_seg.shape[1]:
                 np.save(file=f, arr= seizure_seg[:, seizure_seg.shape[1] - dur*256: seizure_seg.shape[1]])
             else:
@@ -90,7 +91,7 @@ def extract_nonseizures(signals, edfinfo, nonseizure_dir, dur, per_subj_sez_coun
             if i in seizure_indices or i+dur*256-1 in seizure_indices:
                 continue
             nonseizure_seg = signals[:, i:i+dur*256]
-            if nonseizure_seg.shape[1]<dur*256: # This happens at end of the edf file
+            if nonseizure_seg.shape[1]<dur*256: # This may happen at end of the edf file.
                 break 
             f = gzip.GzipFile(nonseizure_dir + f"{edf}_{i+1}"+ ".npy.gz", "w")
             np.save(file=f, arr= nonseizure_seg)
@@ -154,7 +155,7 @@ def create_csvs(new_data_dir):
     return
 
 def train_val_test(new_data_dir, num_folds = 6, data_split = {"train": 0.75, "val": 0.25}):
-    print("\n>> Applying 6-fold Cross Validation then splitting Train into Train and Val(75%,25%)")
+    print(f"\n>> Applying {num_folds}-fold Cross Validation then splitting Train into Train and Val({data_split['train']*100}%,{data_split['val']*100}%)")
     for subject in subjects:
         df = pd.read_csv(new_data_dir+subject+".csv")
         folds = Kfold_crossval(df, num_folds)
@@ -168,7 +169,7 @@ def train_val_test(new_data_dir, num_folds = 6, data_split = {"train": 0.75, "va
             test_df.to_csv(fold_path+"test.csv", index=False)
     return
 
-new_data_dir = makedataset(dur=1, overlap=0.75)
+new_data_dir = makedataset(dur=1, overlap=0.5)
 create_csvs(new_data_dir)
-train_val_test(new_data_dir, num_folds = 6, data_split = {"train": 0.75, "val": 0.25})
+train_val_test(new_data_dir, num_folds = 5, data_split = {"train": 0.75, "val": 0.25})
 print("\nFINISHED!!!")

@@ -1,24 +1,37 @@
-import os
+import os, random
+import pandas as pd, numpy as np
 import scipy.io
-import pandas as pd
 from tqdm.auto import tqdm
 from datapipeline_utils import Kfold_crossval, split_df
+    
+seed = 1
+random.seed(seed)
+np.random.seed(seed)
 
-sample_size = 128
+sample_size = 256
 old_data_dir = "./IIT_Delhi_EEG_dataset/"
 new_data_dir = f"./IIT_Delhi_{sample_size}/"
-num_folds = 6
+num_folds = 5
 data_split = {"train": 0.75, "val": 0.25}
+overlap = 0.5
 
-def extract_data():
+def extract_data(overlap = 0.5):
     for subset in tqdm(["ictal", "interictal"]):
         if not os.path.exists(new_data_dir+subset+"/"):
             os.makedirs(new_data_dir+subset+"/")
 
         for sample in sorted(os.listdir(old_data_dir+subset+"/")):
             mat = scipy.io.loadmat(old_data_dir+subset+"/"+sample)[subset].T[0]
-            for num, i in enumerate(range(0,1024,sample_size)):
-                pd.DataFrame(mat[i:i+sample_size]).to_csv(new_data_dir+subset+"/"+sample[:-4]+f"_{num+1}.csv", index=False, header = False)
+            if subset=="interictal":
+                for num, i in enumerate(range(0,1024,sample_size)):
+                    pd.DataFrame(mat[i:i+sample_size]).to_csv(new_data_dir+subset+"/"+sample[:-4]+f"_{num+1}.csv", index=False, header = False)
+            else: #Apply Overlapping Window for seizure samples
+                for num, i in enumerate(range(0,mat.shape[0],int(sample_size*(1-overlap)))):
+                    # BOUNDARY CONDITION
+                    if i+sample_size-1>=mat.shape[0]:
+                        pd.DataFrame(mat[mat.shape[0]-sample_size:mat.shape[0]]).to_csv(new_data_dir+subset+"/"+sample[:-4]+f"_{num+1}.csv", index=False, header = False)
+                    else:
+                        pd.DataFrame(mat[i:i+sample_size]).to_csv(new_data_dir+subset+"/"+sample[:-4]+f"_{num+1}.csv", index=False, header = False)
     return
 
 def create_df():
@@ -44,5 +57,5 @@ def train_val_test_split(df):
         test_df.to_csv(fold_path+"test.csv", index=False)
     return
 
-extract_data()
+extract_data(overlap = 0.5)
 train_val_test_split(create_df())

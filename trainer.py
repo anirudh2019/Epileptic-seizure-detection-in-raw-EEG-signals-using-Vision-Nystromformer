@@ -1,6 +1,7 @@
 from tqdm.auto import tqdm
 import torch
 from sklearn.metrics import confusion_matrix
+import sklearn.metrics as metrics
 import matplotlib.pyplot as plt
 import seaborn as sn
 from prettytable import PrettyTable
@@ -34,6 +35,9 @@ def train_model(device, model, num_epochs, train_dl, val_dl, loss_fn, optimizer,
     best_epoch_val_sensitivity = 0
     best_epoch_val_hmean = 0
     best_val_conf_mat = None
+    best_fpr = None
+    best_tpr = None
+    best_val_auroc = None
     best_epoch = -1
     
     print("Training...")
@@ -64,13 +68,18 @@ def train_model(device, model, num_epochs, train_dl, val_dl, loss_fn, optimizer,
       epoch_val_accuracy = 0
       epoch_val_loss = 0
 
+      tot_labels = []
+      tot_preds = []
       for data, label, _ in val_dl:
           data = data.to(device)
           label = label.type(torch.LongTensor)
           label = label.to(device)
-                
+          tot_labels.extend(label.tolist())
           with torch.no_grad():
               val_output = model(data)
+          probs = torch.softmax(val_output, dim=1)
+          preds = probs[:, 1].detach()
+          tot_preds.extend(preds.tolist())
               
           val_loss = loss_fn(val_output, label)
           tn,fp,fn,tp = confusion_matrix(label.to('cpu').detach().numpy(), torch.argmax(torch.softmax(val_output, dim = 1), dim = 1).to('cpu').detach().numpy(), labels=[0,1]).ravel()
@@ -86,9 +95,10 @@ def train_model(device, model, num_epochs, train_dl, val_dl, loss_fn, optimizer,
       epoch_val_specificity = val_conf_mat["tn"]/(val_conf_mat["tn"]+val_conf_mat["fp"])
       epoch_val_sensitivity = val_conf_mat["tp"]/(val_conf_mat["tp"]+val_conf_mat["fn"])
       epoch_val_hmean = (2*epoch_val_sensitivity*epoch_val_specificity)/(epoch_val_sensitivity+epoch_val_specificity)
-      torch.cuda.empty_cache()
+      fpr, tpr, threshold = metrics.roc_curve(tot_labels, tot_preds)
+      val_auroc = metrics.auc(fpr, tpr)
+      torch.cuda.empty_cache()             
       
-
       # Track best performance, and save the model's state
       if ((round(epoch_val_hmean, 5)*100 > best_epoch_val_hmean) or (round(epoch_val_hmean, 5)*100 == best_epoch_val_hmean and epoch_val_loss < best_epoch_val_loss)):
             best_epoch_val_accuracy = round(epoch_val_accuracy.item(), 5)*100
@@ -97,6 +107,9 @@ def train_model(device, model, num_epochs, train_dl, val_dl, loss_fn, optimizer,
             best_epoch_val_sensitivity = round(epoch_val_sensitivity, 5)*100
             best_epoch_val_hmean = round(epoch_val_hmean, 5)*100
             best_val_conf_mat = val_conf_mat
+            best_auroc = val_auroc
+            best_tpr = tpr
+            best_fpr = fpr
             best_model_state_dict = model.state_dict()
             best_epoch = epoch + 1
 
@@ -105,7 +118,7 @@ def train_model(device, model, num_epochs, train_dl, val_dl, loss_fn, optimizer,
 
     print(f"***VALIDATION ANALYSIS***")
     print(f"Best epoch: {best_epoch}")
-    print(f"Accuracy: {best_epoch_val_accuracy}")
+    print(f"Accuracy: {best_epoch_val_accuracy}, AUROC: {round(best_auroc,3)}")
     print(f"Sensitivity: {best_epoch_val_sensitivity} - Specificity: {best_epoch_val_specificity}")
     print(f"Harmonic mean of sensitivivty and specificity: {best_epoch_val_hmean}")
 
@@ -123,10 +136,10 @@ def train_model(device, model, num_epochs, train_dl, val_dl, loss_fn, optimizer,
 
     _, ax = plt.subplots()
     sn.set(font_scale=1.4)
-    sn.heatmap([[best_val_conf_mat["tn"],best_val_conf_mat["fp"]],[best_val_conf_mat["fn"],best_val_conf_mat["tp"]]], annot=True, annot_kws={"size": 20}, cmap="YlGnBu", ax= ax) # font size
+    sn.heatmap([[best_val_conf_mat["tn"],best_val_conf_mat["fp"]],[best_val_conf_mat["fn"],best_val_conf_mat["tp"]]], annot=True, annot_kws={"size": 20}, cmap="YlGnBu", ax= ax, fmt='g') # font size
     plt.xlabel('Predicted labels')
     plt.ylabel('True labels')
     plt.savefig(conf_path+'val_confmat.png', bbox_inches='tight')
     plt.show()
 
-    return best_epoch_val_accuracy, best_epoch_val_sensitivity, best_epoch_val_specificity, best_epoch_val_hmean, best_model_state_dict, best_epoch
+    return best_epoch_val_accuracy, best_epoch_val_sensitivity, best_epoch_val_specificity, best_epoch_val_hmean, best_auroc, best_fpr, best_tpr, best_model_state_dict, best_epoch
