@@ -199,7 +199,7 @@ class FeedForward(nn.Module):
 
 
 class TransformerEncoder(nn.Module):
-    def __init__(self, *, dim, depth, dim_head, heads, attn_dropout, ff_dropout, ff_mult, attention, num_landmarks, attn_values_residual, attn_values_residual_conv_kernel):
+    def __init__(self, dim, depth, dim_head, heads, attn_dropout, ff_dropout, ff_mult, attention, num_landmarks, attn_values_residual, attn_values_residual_conv_kernel):
         super().__init__()
         self.layers = nn.ModuleList([])
         for _ in range(depth):

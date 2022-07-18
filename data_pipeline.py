@@ -19,7 +19,7 @@ class EdfDataset(Dataset):
             f.close()
         elif self.dataset_dir=="./bonn_256/":
             signals = pd.read_csv(edf_path, header=None).to_numpy(dtype=np.float32).T    
-        elif self.dataset_dir=="./IIT_Delhi_128/IIT_Delhi_128/":
+        elif self.dataset_dir=="./IIT_Delhi_256/IIT_Delhi_256/":
             signals = pd.read_csv(edf_path, header=None).to_numpy(dtype=np.float32).T
             
         signals = torch.from_numpy(signals)

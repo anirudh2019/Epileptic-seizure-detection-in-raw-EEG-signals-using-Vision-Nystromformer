@@ -28,7 +28,7 @@ print("Device: ", device)
 ######################* Trial Setup
 attention_type = "nystrom"
 attn_mode = "s+t"
-dataset_name = "IIT_Delhi_128" #"CHBMIT_1s_0.75OW" # "bonn_256" "IIT_Delhi_128"
+dataset_name = "IIT_Delhi_256" #"CHBMIT_1s_0.75OW" # "bonn_256" "IIT_Delhi_256"
 dataset_dir = "./"+dataset_name+"/"
 save_dir = f"./results/{dataset_name}/"
 seed = 1
@@ -74,7 +74,7 @@ elif dataset_name == "bonn_256":
     num_landmarks = 8
 
 else:
-    subjects = ["IIT_Delhi_128"]
+    subjects = ["IIT_Delhi_256"]
     num_folds = 5
     lr = 5e-3
     img_size = (1,256)
@@ -120,14 +120,14 @@ for subject_name in subjects:
             val_df = pd.read_csv(dataset_dir+"cases/"+subject_name+f"/fold-{fold+1}/val.csv")
             test_df = pd.read_csv(dataset_dir+"cases/"+subject_name+f"/fold-{fold+1}/test.csv")
         
-        if dataset_name != "IIT_Delhi_128":
+        if dataset_name != "IIT_Delhi_256":
             train_dataset = EdfDataset(train_df, dataset_dir)
             val_dataset = EdfDataset(val_df, dataset_dir)
             test_dataset = EdfDataset(test_df, dataset_dir)
         else:
-            train_dataset = EdfDataset(train_df, dataset_dir+"IIT_Delhi_128/")
-            val_dataset = EdfDataset(val_df, dataset_dir+"IIT_Delhi_128/")
-            test_dataset = EdfDataset(test_df, dataset_dir+"IIT_Delhi_128/")
+            train_dataset = EdfDataset(train_df, dataset_dir+"IIT_Delhi_256/")
+            val_dataset = EdfDataset(val_df, dataset_dir+"IIT_Delhi_256/")
+            test_dataset = EdfDataset(test_df, dataset_dir+"IIT_Delhi_256/")
 
         train_dl = None
         count_samples = np.array([train_df[train_df["label"]==0].shape[0], train_df[train_df["label"]==1].shape[0]])
@@ -149,7 +149,7 @@ for subject_name in subjects:
                     image_size = img_size,
                     patch_size = patch_size,
                     depth = depth,
-                    heads = num_heads,
+                    num_heads = num_heads,
                     num_landmarks = num_landmarks,
                     attn_values_residual = attn_values_residual,
                     attn_values_residual_conv_kernel = attn_values_residual_conv_kernel,

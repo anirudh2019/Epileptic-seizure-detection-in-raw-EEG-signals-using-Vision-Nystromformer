@@ -11,3 +11,4 @@ pytz
 datetime
 statistics
 seaborn
+scipy
