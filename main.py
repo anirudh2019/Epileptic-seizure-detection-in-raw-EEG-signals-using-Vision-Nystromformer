@@ -28,7 +28,7 @@ print("Device: ", device)
 ######################* Trial Setup
 attention_type = "nystrom"
 attn_mode = "s+t"
-dataset_name = "IIT_Delhi_256" #"CHBMIT_1s_0.75OW" # "bonn_256" "IIT_Delhi_256"
+dataset_name = "IIT_Delhi_256" #"CHBMIT_1s_0.5OW" # "bonn_256" "IIT_Delhi_256"
 dataset_dir = "./"+dataset_name+"/"
 save_dir = f"./results/{dataset_name}/"
 seed = 1
@@ -36,7 +36,7 @@ loss_fn = nn.CrossEntropyLoss()
 num_epochs = 75
 batch_size = 32
 
-if dataset_name == "CHBMIT_1s_0.75OW":
+if dataset_name == "CHBMIT_1s_0.5OW":
     subjects = ["chb01","chb02","chb03","chb04","chb05","chb06","chb07","chb08","chb09","chb10","chb11","chb12","chb13","chb14","chb15","chb16","chb17","chb18","chb19","chb20","chb21","chb22","chb23","chb24"]
     num_folds = 5
     lr = 5e-3

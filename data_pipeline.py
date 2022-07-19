@@ -13,7 +13,7 @@ class EdfDataset(Dataset):
     def __getitem__(self, idx):
         edf_path = os.path.join(self.dataset_dir, self.csv.iloc[idx, 0])        
 
-        if self.dataset_dir=="./CHBMIT_1s_0.75OW/":
+        if self.dataset_dir=="./CHBMIT_1s_0.5OW/":
             f = gzip.GzipFile(edf_path, "r")
             signals = np.load(file=f).astype(np.float32)
             f.close()
