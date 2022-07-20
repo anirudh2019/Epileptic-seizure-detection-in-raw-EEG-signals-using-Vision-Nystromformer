@@ -1,7 +1,7 @@
 ##############  IMPORT MODULES
 import os, random, itertools
 from datetime import datetime
-import pytz
+import pytz, time
 import numpy as np
 import pandas as pd
 from sklearn.metrics import confusion_matrix
@@ -35,59 +35,36 @@ seed = 1
 loss_fn = nn.CrossEntropyLoss()
 num_epochs = 75
 batch_size = 32
+num_folds = 5
+lr = 5e-3
+attn_values_residual = True
+attn_dropout = 0.2
+ff_dropout = 0.3
+num_heads = 4
+depth = 3
+embed_dim_scale = 2
+ff_mult = 4
+
+num_landmarks = 8
+attn_values_residual_conv_kernel = 3
 
 if dataset_name == "CHBMIT_1s_0.5OW":
     subjects = ["chb01","chb02","chb03","chb04","chb05","chb06","chb07","chb08","chb09","chb10","chb11","chb12","chb13","chb14","chb15","chb16","chb17","chb18","chb19","chb20","chb21","chb22","chb23","chb24"]
-    num_folds = 5
-    lr = 5e-3
     img_size = (21,256)
-    attn_values_residual = True
-    attn_values_residual_conv_kernel = 33
-    attn_dropout = 0.2
-    ff_dropout = 0.3
-    num_heads = 4
-    depth = 3
     if attn_mode == "s+t":
         patch_size = (1,32)
     elif attn_mode == "s":
         patch_size = (1,256)
     elif attn_mode == "t":
         patch_size = (21,1)
-    embed_dim_scale = 2
-    ff_mult = 4
-    num_landmarks = 32
-
 elif dataset_name == "bonn_256":
     subjects = ["A_E", "B_E", "C_E", "D_E", "ACD_E", "BCD_E", "ABCD_E"]
-    num_folds = 5
-    lr = 5e-3
     img_size = (1,256)
-    attn_values_residual = True
-    attn_values_residual_conv_kernel = 33
-    attn_dropout = 0.2
-    ff_dropout = 0.3
-    num_heads = 4
-    depth = 3
     patch_size = (1,32)
-    embed_dim_scale = 2
-    ff_mult = 4
-    num_landmarks = 8
-
 else:
     subjects = ["IIT_Delhi_256"]
-    num_folds = 5
-    lr = 5e-3
     img_size = (1,256)
-    attn_values_residual = True
-    attn_values_residual_conv_kernel = 33
-    attn_dropout = 0.2
-    ff_dropout = 0.3
-    num_heads = 4
-    depth = 3
     patch_size = (1,32)
-    embed_dim_scale = 2
-    ff_mult = 4
-    num_landmarks = 8
 
 ##############  MAIN FUNCTION
 torch.manual_seed(seed)
@@ -138,11 +115,11 @@ for subject_name in subjects:
             samples_weight = np.array([class_weight[t] for t in train_df["label"]])
             samples_weight=torch.from_numpy(samples_weight)
             sampler = WeightedRandomSampler(samples_weight, num_samples)
-            train_dl = DataLoader(train_dataset, batch_size = batch_size, sampler = sampler)
+            train_dl = DataLoader(train_dataset, batch_size = batch_size, sampler = sampler, pin_memory= True if device == "cuda" else False)
         else:
-            train_dl = DataLoader(train_dataset, batch_size = batch_size, shuffle= True)
-        val_dl = DataLoader(val_dataset, batch_size = batch_size, shuffle= False)
-        test_dl = DataLoader(test_dataset, batch_size = batch_size, shuffle= False)
+            train_dl = DataLoader(train_dataset, batch_size = batch_size, shuffle= True, pin_memory= True if device == "cuda" else False)
+        val_dl = DataLoader(val_dataset, batch_size = batch_size, shuffle= False, pin_memory= True if device == "cuda" else False)
+        test_dl = DataLoader(test_dataset, batch_size = batch_size, shuffle= False, pin_memory= True if device == "cuda" else False)
         
         model = ViT(
                     dim = embed_dim,
@@ -187,11 +164,29 @@ for subject_name in subjects:
         model.load_state_dict(best_model_state_dict)
         torch.save(best_model_state_dict, fold_path+f"fold_{fold+1}_saved_model.pt")
         model.train(False)
+
+        # #Calculating memory consumed in inference
+        # model.cpu()
+        # a = torch.cuda.memory_allocated(device)
+        # model.to(device)
+        # b = torch.cuda.memory_allocated(device)
+        # inference_memory = b - a
+
         test_conf_mat = {"tn": 0, "fp": 0, "fn": 0, "tp": 0}
         test_accuracy = 0
 
+        # #GPU WARMUP to get correct inference time
+        # dummy_input, _, _ = next(iter(val_dl))
+        # for _ in range(10):
+        #     with torch.no_grad():
+        #         _ = model(dummy_input)
+
         tot_labels = []
         tot_preds = []
+        # # start time
+        # torch.cuda.synchronize()
+        # since = int(round(time.time()*1000))
+
         for data, label, _ in tqdm(test_dl):
             data = data.to(device)
             label = label.type(torch.LongTensor)
@@ -212,6 +207,10 @@ for subject_name in subjects:
             acc = binary_acc(torch.argmax(torch.softmax(test_output, dim = 1), dim = 1), label)
             test_accuracy += acc / len(test_dl)
         
+        # torch.cuda.synchronize()
+        # inference_time = int(round(time.time()*1000)) - since
+        # inference_time/= len(test_dl)
+
         test_specificity = test_conf_mat["tn"]/(test_conf_mat["tn"]+test_conf_mat["fp"])
         test_sensitivity = test_conf_mat["tp"]/(test_conf_mat["tp"]+test_conf_mat["fn"])
         test_hmean = (2*test_sensitivity*test_specificity)/(test_sensitivity+test_specificity)

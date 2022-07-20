@@ -37,7 +37,7 @@ def train_model(device, model, num_epochs, train_dl, val_dl, loss_fn, optimizer,
     best_val_conf_mat = None
     best_fpr = None
     best_tpr = None
-    best_val_auroc = None
+    best_auroc = None
     best_epoch = -1
     
     print("Training...")
@@ -52,7 +52,7 @@ def train_model(device, model, num_epochs, train_dl, val_dl, loss_fn, optimizer,
           label = label.to(device)
           output = model(data)
       
-          optimizer.zero_grad()
+          optimizer.zero_grad(set_to_none=True)
           loss = loss_fn(output, label)
           loss.backward()
           optimizer.step()
