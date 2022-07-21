@@ -18,6 +18,7 @@ from trainer import train_model, binary_acc, count_parameters
 from VIT import ViT
 
 ##############  Some Variables
+print("This is main-HO.py")
 IST = pytz.timezone('Asia/Kolkata')
 datetime_ist = datetime.now(IST)
 timestamp = datetime_ist.strftime('%Y%m%d_%H%M%S')
@@ -45,7 +46,7 @@ embed_dim_scale = 2
 ff_mult = 4
 
 num_landmarks_list = [1,2,3,4,5,6,7,8]
-attn_values_residual_conv_kernel_list = [0,3,5,7]
+attn_values_residual_conv_kernel_list = [0,3,5,7,8,16,24,32,40,48,56,64]
 if dataset_name == "CHBMIT_1s_0.5OW":
     subjects = ["chb01","chb02","chb03","chb04","chb05","chb06","chb07","chb08","chb09","chb10","chb11","chb12","chb13","chb14","chb15","chb16","chb17","chb18","chb19","chb20","chb21","chb22","chb23","chb24"]
     img_size = (21,256)
@@ -121,11 +122,14 @@ for subject_name in subjects:
                 samples_weight = np.array([class_weight[t] for t in train_df["label"]])
                 samples_weight=torch.from_numpy(samples_weight)
                 sampler = WeightedRandomSampler(samples_weight, num_samples)
-                train_dl = DataLoader(train_dataset, batch_size = batch_size, sampler = sampler, pin_memory= True if device == "cuda" else False)
+                train_dl = DataLoader(train_dataset, batch_size = batch_size, sampler = sampler, pin_memory= True if device == "cuda" else False, num_workers = 2)
             else:
-                train_dl = DataLoader(train_dataset, batch_size = batch_size, shuffle= True, pin_memory= True if device == "cuda" else False)
-            val_dl = DataLoader(val_dataset, batch_size = batch_size, shuffle= False, pin_memory= True if device == "cuda" else False)
-            test_dl = DataLoader(test_dataset, batch_size = batch_size, shuffle= False, pin_memory= True if device == "cuda" else False)
+                train_dl = DataLoader(train_dataset, batch_size = batch_size, shuffle= True, pin_memory= True if device == "cuda" else False, num_workers = 2)
+            val_dl = DataLoader(val_dataset, batch_size = batch_size, shuffle= False, pin_memory= True if device == "cuda" else False, num_workers = 2)
+            test_dl = DataLoader(test_dataset, batch_size = batch_size, shuffle= False, pin_memory= True if device == "cuda" else False, num_workers = 2)
+
+            if attn_values_residual_conv_kernel == 0:
+                attn_values_residual = False
 
             model = ViT(
                     dim = embed_dim,
