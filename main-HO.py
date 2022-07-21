@@ -123,9 +123,9 @@ for subject_name in subjects:
                 sampler = WeightedRandomSampler(samples_weight, num_samples)
                 train_dl = DataLoader(train_dataset, batch_size = batch_size, sampler = sampler, pin_memory= True if device == "cuda" else False)
             else:
-                train_dl = DataLoader(train_dataset, batch_size = batch_size, shuffle= True, pin_memory= True if device == "cuda" else False, num_workers = 6)
-            val_dl = DataLoader(val_dataset, batch_size = batch_size, shuffle= False, pin_memory= True if device == "cuda" else False, num_workers = 6)
-            test_dl = DataLoader(test_dataset, batch_size = batch_size, shuffle= False, pin_memory= True if device == "cuda" else False, num_workers = 6)
+                train_dl = DataLoader(train_dataset, batch_size = batch_size, shuffle= True, pin_memory= True if device == "cuda" else False)
+            val_dl = DataLoader(val_dataset, batch_size = batch_size, shuffle= False, pin_memory= True if device == "cuda" else False)
+            test_dl = DataLoader(test_dataset, batch_size = batch_size, shuffle= False, pin_memory= True if device == "cuda" else False)
 
             model = ViT(
                     dim = embed_dim,
