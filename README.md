@@ -2,6 +2,18 @@
 Results:
 - Four metrics are considered: Accuracy, Sensitivity, Specificity and harmonic mean of sensitivity and specificity.
 
+  <h2>Bonn dataset</h2>
+  
+|subject|val_accuracy|val_hmean|val_sensitivity|val_specificity|test_accuracy|test_hmean|test_sensitivity|test_specificity|
+|-------|------------|---------|---------------|---------------|-------------|----------|----------------|----------------|
+|A_E    |99.97       |99.97    |100            |99.93          |99.63        |99.62     |99.56           |99.69           |
+|B_E    |99.44       |99.44    |99.41          |99.48          |99           |98.99     |98.56           |99.44           |
+|C_E    |99.2        |99.2     |99.38          |99.03          |98.47        |98.46     |98.31           |98.62           |
+|D_E    |98.06       |98.05    |97.81          |98.3           |97.53        |97.51     |97              |98.06           |
+|ACD_E  |98.32       |98.5     |98.89          |98.12          |98.16        |98.18     |98.25           |98.12           |
+|BCD_E  |98.16       |98.18    |98.23          |98.14          |97.62        |97        |95.88           |98.21           |
+|ABCD_E |98.27       |98.49    |98.85          |98.12          |98.11        |97.51     |96.56           |98.5            |
+
 <h2>CHB-MIT dataset</h2>
 
 |subject|val_accuracy|val_hmean|val_sensitivity|val_specificity|test_accuracy|test_hmean|test_sensitivity|test_specificity|
