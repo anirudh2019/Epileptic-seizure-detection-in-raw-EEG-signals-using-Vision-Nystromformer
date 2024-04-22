@@ -15,6 +15,8 @@ First, due to high temporal resolution, EEG signals are usually extremely long s
 
 <h2>Methodology</h2>
 
+![Alt text](https://github.com/anirudh2019/Epileptic-seizure-detection-in-raw-EEG-signals-using-Vision-Nystromformer/blob/master/Model.png "a title")
+
 <h2>Results:</h2>
 
 - Four metrics are considered: Accuracy, Sensitivity, Specificity and harmonic mean of sensitivity and specificity.
