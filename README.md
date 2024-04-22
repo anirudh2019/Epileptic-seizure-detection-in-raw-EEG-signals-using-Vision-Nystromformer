@@ -8,7 +8,7 @@ Epilepsy is a chronic brain disease characterized by persistent susceptibility t
 
 - Using Transformer model directly with <b>raw EEG signals</b> without any removal of noise and artifacts.
 - Using Transformer with <b>very few parameters</b> and as <b>small size</b> as possible.
-- Implementing <b>linear Time and Space complexity</b> of Attention mechanism in Transformer using Nystrom Attention mechanism.
+- <b>Optimizing Square time and space complexity into Linear Time and Space complexity</b> of Attention mechanism in Transformer using Nystrom Attention mechanism.
 
 <h3>Why Transformer instead of CNN and RNN?</h3>
 First, due to high temporal resolution, EEG signals are usually extremely long sequences. The sequence models, e.g., RNNs and LSTMs, process the EEG signals sequentially, namely, they train the data at each time step one by one, which largely increases the training time for convergence. In addition, although some deep learning frameworks can capture temporal dependencies, such as RNN-based models for long-term dependencies and CNN-based models for neighboring interactions, they can only achieve limited performance when the sequences are extremely long.
@@ -39,7 +39,7 @@ Three datasets are used: CHB-MIT, Bonn and IIT-Delhi EEG datasets.
 <h2>Results:</h2>
 
 - Four metrics are considered: Accuracy, Sensitivity, Specificity and harmonic mean of sensitivity and specificity.
-- Accuracy, Sensitivity and Specificity in % on Test Dataset for CHB-MIT are <b>96.78, 97.46, 96.16</b> respectively, for Bonn are <b>98.36, 97.73, 98.66</b> on average respectively, and for IIT-Delhi are <b>96.77, 96.02, 97.98</b> respectively.
+- Accuracy, Sensitivity and Specificity in % on Test Dataset for <b>CHB-MIT</b> are <b>96.78, 97.46, 96.16</b> respectively, for <b>Bonn</b> are <b>98.36, 97.73, 98.66</b> on average respectively, and for <b>IIT-Delhi</b> are <b>96.77, 96.02, 97.98</b> respectively.
 
 <h3>IIT-Delhi dataset</h3>
 
