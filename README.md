@@ -4,18 +4,37 @@
 
 Epilepsy is a chronic brain disease characterized by persistent susceptibility to cause recurrent seizures. Electroencephalography (EEG) is a neuroimaging technique measuring the electrophysiological activity of the cerebral cortex. EEG has been commonly used to diagnose and treat patients with epilepsy.
 
+<h3>Main Contributions of this study</h3>
+
+- Using Transformer model directly with <b>raw EEG signals</b> without any removal of noise and artifacts.
+- Using Transformer with <b>very few parameters</b> and as <b>small size</b> as possible.
+- Implementing <b>linear Time and Space complexity</b> of Attention mechanism in Transformer using Nystrom Attention mechanism.
+
 <h3>Why Transformer instead of CNN and RNN?</h3>
 First, due to high temporal resolution, EEG signals are usually extremely long sequences. The sequence models, e.g., RNNs and LSTMs, process the EEG signals sequentially, namely, they train the data at each time step one by one, which largely increases the training time for convergence. In addition, although some deep learning frameworks can capture temporal dependencies, such as RNN-based models for long-term dependencies and CNN-based models for neighboring interactions, they can only achieve limited performance when the sequences are extremely long.
 
-<h3>Main Contributions of this study</h3>
-
-- Using Transformer model directly with raw EEG signals without any removal of noise and artifacts.
-- Using Transformer with very few parameters and as small as possible.
-- Implementing linear Time and Space complexity of Attention mechanism in Transformer using Nystrom Attention mechanism.
-
 <h2>Methodology</h2>
 
+<h3>Model</h3>
+
 ![Alt text](https://github.com/anirudh2019/Epileptic-seizure-detection-in-raw-EEG-signals-using-Vision-Nystromformer/blob/master/Model.png "a title")
+
+<h3>Datasets</h3>
+
+Three datasets are used: CHB-MIT, Bonn and IIT-Delhi EEG datasets.
+
+<h3>Training</h3>
+
+- <b>Number of Trainable parameters</b> for CHB-MIT, Bonn and IIT-Delhi datasets are <b>162894, 7250, 2058 only</b> respectively which is <b>very less for a transformer model</b>.
+- Before training, for reliable results, I performed 6-fold cross validation in which one fold is taken as test dataset and remaining folds are taken as train dataset. I further took 25% of train dataset as validation dataset and remaining 75% is taken as train dataset.
+- I then trained the model for 75 epochs using Adam optimizer, batch size of 32 and cross entropy loss function.
+- Hyperparameters for each dataset is as follows:
+
+|Dataset|sequence length|Embedding dimension|learning rate|signal input size|patch size|depth|# attention heads|embedding dimension scale|Feedforward multiplier|Number of landmarks|
+|---|---|---|---|---|---|---|---|---|---|---|
+|CHB-MIT|168|64|0.005|(21,256)|(1,32)|3|4|2|4|32|
+|Bonn|32|16|0.005|(1,256)|(1,8)|3|4|2|2|8|
+|IIT-Delhi|32|8|0.001|(1,128)|(1,4)|3|4|2|2|8|
 
 <h2>Results:</h2>
 
