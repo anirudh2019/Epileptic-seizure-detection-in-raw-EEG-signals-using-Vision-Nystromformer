@@ -1,4 +1,4 @@
-# eegFinal
+# Epileptic seizure detection in raw EEG signals using Vision Nystromformer
 Results:
 - Four metrics are considered: Accuracy, Sensitivity, Specificity and harmonic mean of sensitivity and specificity.
 
