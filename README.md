@@ -39,6 +39,7 @@ Three datasets are used: CHB-MIT, Bonn and IIT-Delhi EEG datasets.
 <h2>Results:</h2>
 
 - Four metrics are considered: Accuracy, Sensitivity, Specificity and harmonic mean of sensitivity and specificity.
+- Accuracy, Sensitivity and Specificity in % on Test Dataset for CHB-MIT are <b>96.78, 97.46, 96.16</b> respectively, for Bonn are <b>98.36, 97.73, 98.66</b> on average respectively, and for IIT-Delhi are <b>96.77, 96.02, 97.98</b> respectively.
 
 <h3>IIT-Delhi dataset</h3>
 
