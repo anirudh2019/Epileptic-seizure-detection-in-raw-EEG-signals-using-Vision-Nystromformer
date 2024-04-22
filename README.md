@@ -1,14 +1,31 @@
 # Epileptic seizure detection in raw EEG signals using Vision Nystromformer
-Results:
+
+<h2>Introduction</h2>
+
+Epilepsy is a chronic brain disease characterized by persistent susceptibility to cause recurrent seizures. Electroencephalography (EEG) is a neuroimaging technique measuring the electrophysiological activity of the cerebral cortex. EEG has been commonly used to diagnose and treat patients with epilepsy.
+
+<h3>Why Transformer instead of CNN and RNN?</h3>
+First, due to high temporal resolution, EEG signals are usually extremely long sequences. The sequence models, e.g., RNNs and LSTMs, process the EEG signals sequentially, namely, they train the data at each time step one by one, which largely increases the training time for convergence. In addition, although some deep learning frameworks can capture temporal dependencies, such as RNN-based models for long-term dependencies and CNN-based models for neighboring interactions, they can only achieve limited performance when the sequences are extremely long.
+
+<h3>Main Contributions of this study</h3>
+
+- Using Transformer model directly with raw EEG signals without any removal of noise and artifacts.
+- Using Transformer with very few parameters and as small as possible.
+- Implementing linear Time and Space complexity of Attention mechanism in Transformer using Nystrom Attention mechanism.
+
+<h2>Methodology</h2>
+
+<h2>Results:</h2>
+
 - Four metrics are considered: Accuracy, Sensitivity, Specificity and harmonic mean of sensitivity and specificity.
 
-<h2>IIT-Delhi dataset</h2>
+<h3>IIT-Delhi dataset</h3>
 
 |val_accuracy|val_hmean|val_sensitivity|val_specificity|test_accuracy|test_hmean|test_sensitivity|test_specificity|
 |------------|---------|---------------|---------------|-------------|----------|----------------|----------------|
 |98.52       |98.6     |98.21          |99.01          |96.77        |96.95     |96.02           |97.98           |
 
-<h2>Bonn dataset</h2>
+<h3>Bonn dataset</h3>
   
 |subject|val_accuracy|val_hmean|val_sensitivity|val_specificity|test_accuracy|test_hmean|test_sensitivity|test_specificity|
 |-------|------------|---------|---------------|---------------|-------------|----------|----------------|----------------|
@@ -20,7 +37,7 @@ Results:
 |BCD_E  |98.16       |98.18    |98.23          |98.14          |97.62        |97        |95.88           |98.21           |
 |ABCD_E |98.27       |98.49    |98.85          |98.12          |98.11        |97.51     |96.56           |98.5            |
 
-<h2>CHB-MIT dataset</h2>
+<h3>CHB-MIT dataset</h3>
 
 |subject|val_accuracy|val_hmean|val_sensitivity|val_specificity|test_accuracy|test_hmean|test_sensitivity|test_specificity|
 |-------|------------|---------|---------------|---------------|-------------|----------|----------------|----------------|
