@@ -2,7 +2,13 @@
 Results:
 - Four metrics are considered: Accuracy, Sensitivity, Specificity and harmonic mean of sensitivity and specificity.
 
-  <h2>Bonn dataset</h2>
+<h2>IIT-Delhi dataset</h2>
+
+|val_accuracy|val_hmean|val_sensitivity|val_specificity|test_accuracy|test_hmean|test_sensitivity|test_specificity|
+|------------|---------|---------------|---------------|-------------|----------|----------------|----------------|
+|98.52       |98.6     |98.21          |99.01          |96.77        |96.95     |96.02           |97.98           |
+
+<h2>Bonn dataset</h2>
   
 |subject|val_accuracy|val_hmean|val_sensitivity|val_specificity|test_accuracy|test_hmean|test_sensitivity|test_specificity|
 |-------|------------|---------|---------------|---------------|-------------|----------|----------------|----------------|
